@@ -1,0 +1,41 @@
+{
+    "dinoNumber": "1818",
+    "isKarma": false,
+    "originalDinoNumber": "1818",
+    "stats": {
+        "acceleration": {
+            "currentValue": 61,
+            "maxValue": 82
+        },
+        "agility": {
+            "currentValue": 59,
+            "maxValue": 83
+        },
+        "attack": {
+            "currentValue": 56,
+            "maxValue": 78
+        },
+        "defense": {
+            "currentValue": 0,
+            "maxValue": 81
+        },
+        "health": {
+            "currentValue": 68,
+            "maxValue": 91
+        },
+        "speed": {
+            "currentValue": 61,
+            "maxValue": 89
+        },
+        "bonusPoints": 3
+    },
+    "traits": {
+        "eyes": "Bliss Lashes",
+        "face": "Grin",
+        "clothes": "Tshirt Camo",
+        "headwear": "Cap Grey",
+        "background": "Fly Magenta",
+        "body": "Grey Spotted",
+        "accessory": "Nosehorn Gold"
+    }
+}
