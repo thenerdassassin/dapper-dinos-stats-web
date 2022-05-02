@@ -39,29 +39,29 @@ export const Stats: React.FC<StatsProps> = ({acceleration, agility, attack, defe
     }
     return (
         <>
-            <GridItem  minWidth="125px" colSpan={1} colStart={3} bg='papayawhip'>
+            <GridItem  minWidth="125px" colSpan={1} colStart={3} rowStart={2} bg='papayawhip'>
                 <DinoStat statTitle={"Acceleration"} statValue={acceleration}/>
             </GridItem>
-            <GridItem minWidth="125px" colSpan={1} colStart={4} bg='papayawhip'>
+            <GridItem minWidth="125px" colSpan={1} colStart={4} rowStart={2} bg='papayawhip'>
                 <DinoStat statTitle={"Agility"} statValue={agility}/>
             </GridItem>
-            <GridItem minWidth="125px" colSpan={1} colStart={5} bg='papayawhip'>
+            <GridItem minWidth="125px" colSpan={1} colStart={5} rowStart={2} bg='papayawhip'>
                 <DinoStat statTitle={"Attack"} statValue={attack}/>
             </GridItem>
-            <GridItem minWidth="125px" colSpan={1} colStart={6} bg='papayawhip'>
+            <GridItem minWidth="125px" colSpan={1} colStart={6} rowStart={2} bg='papayawhip'>
                 <DinoStat statTitle={"Defense"} statValue={defense}/>
             </GridItem>
 
-            <GridItem colSpan={1} colStart={3} bg='papayawhip'>
+            <GridItem colSpan={1} colStart={3} rowStart={3} bg='papayawhip'>
                 <DinoStat statTitle={"Health"} statValue={health}/>
             </GridItem>
-            <GridItem colSpan={1} colStart={4} bg='papayawhip'>
+            <GridItem colSpan={1} colStart={4} rowStart={3} bg='papayawhip'>
                 <DinoStat statTitle={"Speed"} statValue={speed}/>
             </GridItem>
-            <GridItem colSpan={1} colStart={5} bg='papayawhip'>
+            <GridItem colSpan={1} colStart={5} rowStart={3} bg='papayawhip'>
                 <DinoStat statTitle={"Bonus Points"} statValue={bonusPointsStatValue}/>
             </GridItem>
-            <GridItem colSpan={1} colStart={6} bg='papayawhip'>
+            <GridItem colSpan={1} colStart={6} rowStart={3} bg='papayawhip'>
                 <DinoStat statTitle={"Total Points"} statValue={totalPoints}/>
             </GridItem>
         </>
