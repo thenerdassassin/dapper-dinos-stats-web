@@ -24,10 +24,14 @@ function App() {
   const [searchValue, setSearchValue] = useState('')
   const [dinoNumber, setDinoNumber] = useState<number|undefined>(undefined)
   const [dino, setDino] = useState<Dino | undefined>(undefined)
+  const [isError, setIsError] = useState<boolean>(false)
 
   const onDinoNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // TODO: Validate Value
-    setSearchValue(event.currentTarget.value)
+    if (event && event.currentTarget && event.currentTarget.value) {
+      const targetValue = event.target.value
+      const filteredValue = targetValue.replace(/\D/,'')
+      setSearchValue(filteredValue)
+    }
   }
 
   const getDino = () => {
@@ -55,8 +59,8 @@ function App() {
 
         {/* Search Bar */}
         <GridItem rowSpan={1} colSpan={1} colStart={5}>
-          <Input placeholder='Dino Number' size='lg' 
-            onChange={onDinoNumberChange} value={searchValue}/>
+          <Input placeholder='Dino Number' size='lg' type="text" pattern="[0-9]*"
+            onChange={onDinoNumberChange} value={searchValue} isInvalid = {isError} />
         </GridItem>
         <GridItem rowSpan={1} colSpan={1} colStart={6}>
         <Button leftIcon={<SearchIcon />} colorScheme='blue' variant='outline' onClick={getDino}>
