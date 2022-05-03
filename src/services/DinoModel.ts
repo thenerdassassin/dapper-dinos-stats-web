@@ -30,6 +30,7 @@ export interface Dino {
         bonusPoints: number
     },
     traits: {
+        image: string
         eyes: string,
         face: string,
         clothes: string,

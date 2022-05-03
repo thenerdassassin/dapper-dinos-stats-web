@@ -1,19 +1,20 @@
-import {
+import React, {
   useState,
   useEffect,
 } from "react"
 import {
   ChakraProvider,
   Button,
-  Center,
+  FormControl,
   Grid,
   GridItem,
+  Heading,
+  HStack,
   Image,
   Input,
-  theme,
   Hide,
   Text,
-  VStack,
+  theme,
 } from "@chakra-ui/react"
 import { SearchIcon } from "@chakra-ui/icons"
 import { Traits } from "./components/Traits"
@@ -22,76 +23,93 @@ import { Dino } from "./services/DinoModel"
 
 function App() {
   const [searchValue, setSearchValue] = useState('')
-  const [dinoNumber, setDinoNumber] = useState<number|undefined>(undefined)
+  const [dinoNumber, setDinoNumber] = useState<number | undefined>(undefined)
   const [dino, setDino] = useState<Dino | undefined>(undefined)
-  const [isError, setIsError] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const onDinoNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event && event.currentTarget && event.currentTarget.value) {
+    if (event && event.currentTarget) {
       const targetValue = event.target.value
-      const filteredValue = targetValue.replace(/\D/,'')
-      setSearchValue(filteredValue)
+      if (targetValue) {
+        setSearchValue(targetValue.replace(/\D/, ''))
+      } else {
+        setSearchValue('')
+      }
     }
   }
 
   const getDino = () => {
-    setDinoNumber(parseInt(searchValue))
-    setSearchValue('')
+    const searchNumber = parseInt(searchValue)
+    if (searchNumber) {
+      setIsLoading(true)
+      setDinoNumber(parseInt(searchValue))
+      setSearchValue('')
+    }
   }
 
+  const onLoadedImage = () => {setIsLoading(false)}
+
   useEffect(() => {
-    const fetchDino = async() => {
-      const url = "https://5fkdfj7lgf.execute-api.us-east-1.amazonaws.com/dino/" + dinoNumber
-      const response = await fetch(url)
-      const dinoJson = await response.json()
-      setDino(JSON.parse(dinoJson))
+    const fetchDino = async () => {
+      if (dinoNumber) {
+        const url = "https://5fkdfj7lgf.execute-api.us-east-1.amazonaws.com/dino/" + dinoNumber + "?isKarma=false"
+        const response = await fetch(url)
+        const dinoJson = await response.json()
+        setDino(JSON.parse(dinoJson))
+      }
     }
 
     fetchDino().catch(console.error)
   }, [dinoNumber]);
 
   return <ChakraProvider theme={theme}>
-      <Grid minH="50vh" maxH="70vh" p={25} gap={4} fontSize={"x-large"} fontFamily={"flintstone"}>
-        {/* Dino Title */}
-        <GridItem rowSpan={1} colSpan={1}>
-          <Text noOfLines={1} fontSize={"4xl"} alignContent={"start"} fontWeight="extrabold">Dapper Dino #{dinoNumber}</Text>
-        </GridItem>
+    <Heading p='25' bg='blue.900' textColor='white' size='2xl'>Dapper Dino Data</Heading>
+    <Grid minH="50vh" maxH="100vh" p={25} gap={4} fontSize={"x-large"} fontFamily={"flintstone"}>
+      {/* Dino Title */}
+      <GridItem rowSpan={1} colSpan={1}>
+        <Text noOfLines={1} fontSize={"4xl"} alignContent={"start"} fontWeight="extrabold">Dapper Dino #{dinoNumber}</Text>
+      </GridItem>
 
-        {/* Search Bar */}
-        <GridItem rowSpan={1} colSpan={1} colStart={5}>
-          <Input placeholder='Dino Number' size='lg' type="text" pattern="[0-9]*"
-            onChange={onDinoNumberChange} value={searchValue} isInvalid = {isError} />
-        </GridItem>
-        <GridItem rowSpan={1} colSpan={1} colStart={6}>
-        <Button leftIcon={<SearchIcon />} colorScheme='blue' variant='outline' onClick={getDino}>
-          Find Dino
-          </Button>
-        </GridItem>
+      {/* Search Bar */}
+      <GridItem rowSpan={1} colSpan={3} colStart={4}>
+        <FormControl>
+          <HStack>
+            <Input placeholder='Dino Number' size='md' type="text" pattern="[0-9]*" width="200px"
+              onInput={onDinoNumberChange} value={searchValue} isRequired/>
+            <Button leftIcon={<SearchIcon />} colorScheme='blue' variant='outline' 
+              isLoading={isLoading} type='submit' onClick={getDino}>
+              Find Dino
+            </Button>
+          </HStack>
+        </FormControl>
+      </GridItem>
 
-        {/* TODO: set Dino Image */}
-        <GridItem rowSpan={2} colSpan={2} rowStart={2} minHeight="250px" minWidth="300px">
-              <Image src='https://img.dapperdinos.com/thumb/dinos/vY0uUdtS8R4P3cM.png' alt='Dino Image' />
-        </GridItem>
-
-        {/* Dino Stats */}
-        { dino && dino.stats &&
-          <Stats acceleration={dino.stats.acceleration}
-            agility={dino.stats.agility}
-            attack={dino.stats.attack}
-            defense={dino.stats.defense}
-            health={dino.stats.health}
-            speed={dino.stats.speed}
-            bonusPoints={dino.stats.bonusPoints}
-          />
+      {/* TODO: set Dino Image */}
+      <GridItem rowSpan={2} colSpan={2} rowStart={2} minHeight="250px" minWidth="300px" maxWidth="50vh">
+        {dino && dino.traits &&
+          <Image src={dino.traits.image} alt='Dino Image' fit="fill" loading='eager' onLoad={onLoadedImage}/>
         }
+      </GridItem>
 
-        {/* TODO: Set Properties */}
-        <Hide>
-          <GridItem colSpan={6} colStart={1}>
-            <Traits title="Peek-a-boo" />
-          </GridItem>
-        </Hide>
-      </Grid>
+      {/* Dino Stats */}
+      {dino && dino.stats &&
+        <Stats acceleration={dino.stats.acceleration}
+          agility={dino.stats.agility}
+          attack={dino.stats.attack}
+          defense={dino.stats.defense}
+          health={dino.stats.health}
+          speed={dino.stats.speed}
+          bonusPoints={dino.stats.bonusPoints}
+        />
+      }
+
+      {/* TODO: Set Properties */}
+      <Hide>
+        <GridItem colSpan={6} colStart={1}>
+          <Traits title="Peek-a-boo" />
+        </GridItem>
+      </Hide>
+    </Grid>
   </ChakraProvider>
 }
 export default App;
