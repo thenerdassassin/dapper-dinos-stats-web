@@ -3,6 +3,8 @@ import React, {
   useEffect,
 } from "react"
 import {
+  Alert,
+  AlertIcon,
   ChakraProvider,
   Button,
   FormControl,
@@ -15,6 +17,7 @@ import {
   Hide,
   Text,
   theme,
+  useToast
 } from "@chakra-ui/react"
 import { SearchIcon } from "@chakra-ui/icons"
 import { Traits } from "./components/Traits"
@@ -26,6 +29,7 @@ function App() {
   const [dinoNumber, setDinoNumber] = useState<number | undefined>(undefined)
   const [dino, setDino] = useState<Dino | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isError, setIsError] = useState<boolean>(false)
 
   const onDinoNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event && event.currentTarget) {
@@ -39,23 +43,35 @@ function App() {
   }
 
   const getDino = () => {
+    setIsError(false)
     const searchNumber = parseInt(searchValue)
-    if (searchNumber) {
+    if (searchNumber || searchNumber == 0) {
       setIsLoading(true)
-      setDinoNumber(parseInt(searchValue))
+      setDinoNumber(parseInt(searchValue)) 
       setSearchValue('')
     }
   }
 
-  const onLoadedImage = () => {setIsLoading(false)}
+  const onLoadedImage = () => { setIsLoading(false) }
 
   useEffect(() => {
     const fetchDino = async () => {
-      if (dinoNumber) {
+      if (dinoNumber || dinoNumber == 0) {
         const url = "https://5fkdfj7lgf.execute-api.us-east-1.amazonaws.com/dino/" + dinoNumber + "?isKarma=false"
-        const response = await fetch(url)
-        const dinoJson = await response.json()
-        setDino(JSON.parse(dinoJson))
+        await fetch(url)
+          .then(
+            response => response.json())
+          .then(
+            dinoJson => {
+              console.log(dinoJson)
+              setDino(JSON.parse(dinoJson))
+            }
+          ).catch(err => {
+            console.error("2: " + err)
+            setDino(undefined)
+            setIsLoading(false)
+            setIsError(true)
+          })
       }
     }
 
@@ -75,8 +91,8 @@ function App() {
         <FormControl>
           <HStack>
             <Input placeholder='Dino Number' size='md' type="text" pattern="[0-9]*" width="200px"
-              onInput={onDinoNumberChange} value={searchValue} isRequired/>
-            <Button leftIcon={<SearchIcon />} colorScheme='blue' variant='outline' 
+              onInput={onDinoNumberChange} value={searchValue} isRequired />
+            <Button leftIcon={<SearchIcon />} colorScheme='blue' variant='outline'
               isLoading={isLoading} type='submit' onClick={getDino}>
               Find Dino
             </Button>
@@ -84,15 +100,14 @@ function App() {
         </FormControl>
       </GridItem>
 
-      {/* TODO: set Dino Image */}
       <GridItem rowSpan={2} colSpan={2} rowStart={2} minHeight="250px" minWidth="300px" maxWidth="50vh">
         {dino && dino.traits &&
-          <Image src={dino.traits.image} alt='Dino Image' fit="fill" loading='eager' onLoad={onLoadedImage}/>
+          <Image src={dino.traits.image} alt='Dino Image' fit="fill" loading='eager' onLoad={onLoadedImage} />
         }
       </GridItem>
 
       {/* Dino Stats */}
-      {dino && dino.stats &&
+      {dino && dino.stats ?
         <Stats acceleration={dino.stats.acceleration}
           agility={dino.stats.agility}
           attack={dino.stats.attack}
@@ -100,7 +115,17 @@ function App() {
           health={dino.stats.health}
           speed={dino.stats.speed}
           bonusPoints={dino.stats.bonusPoints}
-        />
+          percentileRanks={dino.percentileRanks}
+        /> :
+        isError &&
+        <GridItem colSpan={3} colStart={2} rowStart={2}> 
+          <Alert status='error'>
+        <AlertIcon />
+        Error retrieving Dino #{dinoNumber}.
+      </Alert>
+
+        </GridItem>
+       
       }
 
       {/* TODO: Set Properties */}

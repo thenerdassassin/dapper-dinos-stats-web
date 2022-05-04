@@ -2,6 +2,14 @@ export interface Dino {
     dinoNumber: string,
     isKarma: boolean,
     originalDinoNumber: string,
+    percentileRanks: {
+        acceleration: number,
+        agility: number,
+        attack: number,
+        defense: number,
+        health: number,
+        speed: number,
+    },
     stats: {
         acceleration: {
             currentValue: number,

@@ -10,17 +10,24 @@ interface DinoStatProps {
     statValue: {
         currentValue: number;
         maxValue: number;
-    }
+    },
+    percentile: number|undefined
 }
 
-export const DinoStat: React.FC<DinoStatProps> = ({ statTitle, statValue }) => {
+export const DinoStat: React.FC<DinoStatProps> = ({ statTitle, statValue, percentile }) => {
 
     return (
         <VStack>
             <Text>{statTitle}</Text>
-            <Text> {statValue.maxValue > 0 ?
-                format('{0}/{1}', statValue.currentValue, statValue.maxValue) : statValue.currentValue
-            } </Text>
+            { percentile ?
+                <Text> {statValue.currentValue} - Top {percentile}%</Text> :
+                <Text> {statValue.currentValue}</Text>
+            }
+            {
+                statValue.maxValue > 0  &&
+                <Text> Max: {statValue.maxValue}</Text>
+                
+            }
         </VStack>
 
     )
