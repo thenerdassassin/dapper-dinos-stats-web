@@ -8,6 +8,7 @@ import {
   ChakraProvider,
   Button,
   FormControl,
+  FormLabel,
   Grid,
   GridItem,
   Heading,
@@ -15,9 +16,9 @@ import {
   Image,
   Input,
   Hide,
+  Switch,
   Text,
-  theme,
-  useToast
+  theme
 } from "@chakra-ui/react"
 import { SearchIcon } from "@chakra-ui/icons"
 import { Traits } from "./components/Traits"
@@ -30,6 +31,7 @@ function App() {
   const [dino, setDino] = useState<Dino | undefined>(undefined)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isError, setIsError] = useState<boolean>(false)
+  const [isKarma, setIsKarma] = useState<boolean>(false)
 
   const onDinoNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event && event.currentTarget) {
@@ -45,19 +47,25 @@ function App() {
   const getDino = () => {
     setIsError(false)
     const searchNumber = parseInt(searchValue)
-    if (searchNumber || searchNumber == 0) {
+    if (searchNumber || searchNumber === 0) {
       setIsLoading(true)
-      setDinoNumber(parseInt(searchValue)) 
+      setDinoNumber(parseInt(searchValue))
       setSearchValue('')
     }
   }
 
   const onLoadedImage = () => { setIsLoading(false) }
+  const onIsKarmaSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event && event.currentTarget) {
+      setIsKarma(event.currentTarget.checked)
+    }
+  }
 
   useEffect(() => {
     const fetchDino = async () => {
-      if (dinoNumber || dinoNumber == 0) {
-        const url = "https://5fkdfj7lgf.execute-api.us-east-1.amazonaws.com/dino/" + dinoNumber + "?isKarma=false"
+      if (dinoNumber || dinoNumber === 0) {
+        console.log("Dino Number: " + dinoNumber + ", isKarma:" + isKarma)
+        const url = "https://5fkdfj7lgf.execute-api.us-east-1.amazonaws.com/dino/" + dinoNumber + "?isKarma=" + isKarma
         await fetch(url)
           .then(
             response => response.json())
@@ -92,6 +100,10 @@ function App() {
           <HStack>
             <Input placeholder='Dino Number' size='md' type="text" pattern="[0-9]*" width="200px"
               onInput={onDinoNumberChange} value={searchValue} isRequired />
+            <FormLabel htmlFor='is-karma-switch' mb='0'>
+              Is Karma Dino?
+            </FormLabel>
+            <Switch id='is-karma-switch' onChange={onIsKarmaSwitch} />
             <Button leftIcon={<SearchIcon />} colorScheme='blue' variant='outline'
               isLoading={isLoading} type='submit' onClick={getDino}>
               Find Dino
@@ -118,14 +130,14 @@ function App() {
           percentileRanks={dino.percentileRanks}
         /> :
         isError &&
-        <GridItem colSpan={3} colStart={2} rowStart={2}> 
+        <GridItem colSpan={3} colStart={2} rowStart={2}>
           <Alert status='error'>
-        <AlertIcon />
-        Error retrieving Dino #{dinoNumber}.
-      </Alert>
+            <AlertIcon />
+            Error retrieving Dino #{dinoNumber}.
+          </Alert>
 
         </GridItem>
-       
+
       }
 
       {/* TODO: Set Properties */}
